@@ -15,7 +15,7 @@ import { PropertyListing } from "./components/PropertyListing";
 import { AgentLogin } from "./components/AgentLogin";
 import { AgentDashboard } from "./components/AgentDashboard";
 import { SellerLogin } from "./components/SellerLogin";
-import { SellerDashboard } from "./components/SellerDashboard";
+import { SellerDashboard } from "./components/seller-dashboard/SellerDashboard";
 import { AdminLogin } from "./components/AdminLogin";
 import { AdminDashboard } from "./components/AdminDashboard";
 import { AboutUs } from "./components/AboutUs";
@@ -48,7 +48,7 @@ export default function App() {
             <Route path="/agent" element={<AgentLogin />} />
             <Route path="/agent/dashboard" element={<AgentDashboard />} />
             <Route path="/seller" element={<SellerLogin />} />
-            <Route path="/seller/dashboard" element={<SellerDashboard />} />
+            <Route path="/seller/dashboard/*" element={<SellerDashboard />} />
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/properties" element={<PropertyListing />} />
