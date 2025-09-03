@@ -1,16 +1,42 @@
+<<<<<<< HEAD
 import { useState, useMemo } from "react";
 
+=======
+import { useState, useEffect, useMemo } from "react";
+import { Header } from "./Header";
+import { Footer } from "./Footer";
+>>>>>>> 0378b4b (Default message)
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
+<<<<<<< HEAD
 import { Search, MapPin, Bed, Bath, Square, Filter, Heart, Share2, ChevronLeft, ChevronRight } from "lucide-react";
 import { properties, Property } from "../data/properties";
+=======
+import { Search, MapPin, Bed, Bath, Square, Filter, Heart, Share2 } from "lucide-react";
+
+interface Property {
+  id: number;
+  title: string;
+  price_formatted: string;
+  city: string;
+  state: string;
+  beds: number;
+  baths: number;
+  area_sqft: number;
+  ribl_rating?: string;
+  status: string;
+  description: string;
+}
+>>>>>>> 0378b4b (Default message)
 import { PropertyMap } from "./PropertyMap";
 import { Link } from "react-router-dom";
 
 export function PropertyListing() {
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCity, setSelectedCity] = useState("all");
   const [selectedBHK, setSelectedBHK] = useState("all");
@@ -18,25 +44,43 @@ export function PropertyListing() {
   const [sortBy, setSortBy] = useState("relevance");
   const [currentPropertyIndex, setCurrentPropertyIndex] = useState(0);
 
+  useEffect(() => {
+    fetchProperties();
+  }, []);
+
+  const fetchProperties = async () => {
+    try {
+      const response = await fetch('http://localhost/Master-Code-NAL/api/properties.php');
+      const data = await response.json();
+      if (data.success) {
+        setProperties(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Extract unique cities from properties
   const cities = useMemo(() => {
-    const citySet = new Set(properties.map(p => p.location.split(',')[0].trim()));
+    const citySet = new Set(properties.map(p => p.city));
     return Array.from(citySet);
-  }, []);
+  }, [properties]);
 
   // Filter and sort properties
   const filteredProperties = useMemo(() => {
     let filtered = properties.filter(property => {
       const matchesSearch = property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          property.location.toLowerCase().includes(searchQuery.toLowerCase());
+                          property.city.toLowerCase().includes(searchQuery.toLowerCase());
       
       const matchesCity = selectedCity === "all" || 
-                         property.location.toLowerCase().includes(selectedCity.toLowerCase());
+                         property.city.toLowerCase().includes(selectedCity.toLowerCase());
       
       const matchesBHK = selectedBHK === "all" || 
                         property.beds.toString() === selectedBHK;
       
-      const matchesPrice = priceRange === "all" || checkPriceRange(property.price, priceRange);
+      const matchesPrice = priceRange === "all" || checkPriceRange(property.price_formatted, priceRange);
       
       return matchesSearch && matchesCity && matchesBHK && matchesPrice;
     });
@@ -44,20 +88,20 @@ export function PropertyListing() {
     // Sort properties
     switch (sortBy) {
       case "price-low":
-        filtered.sort((a, b) => extractPrice(a.price) - extractPrice(b.price));
+        filtered.sort((a, b) => extractPrice(a.price_formatted) - extractPrice(b.price_formatted));
         break;
       case "price-high":
-        filtered.sort((a, b) => extractPrice(b.price) - extractPrice(a.price));
+        filtered.sort((a, b) => extractPrice(b.price_formatted) - extractPrice(a.price_formatted));
         break;
       case "newest":
-        filtered.sort((a, b) => b.id.localeCompare(a.id));
+        filtered.sort((a, b) => b.id - a.id);
         break;
       default:
         break;
     }
 
     return filtered;
-  }, [searchQuery, selectedCity, selectedBHK, priceRange, sortBy]);
+  }, [properties, searchQuery, selectedCity, selectedBHK, priceRange, sortBy]);
 
   const extractPrice = (priceStr: string): number => {
     const match = priceStr.match(/₹([\d.]+)\s*([LCr])/);
@@ -163,6 +207,7 @@ export function PropertyListing() {
           </div>
         </div>
 
+<<<<<<< HEAD
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-280px)]">
           {/* Map Section - 50% */}
@@ -184,8 +229,21 @@ export function PropertyListing() {
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
+=======
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="text-gray-400 text-lg">Loading properties...</div>
+>>>>>>> 0378b4b (Default message)
           </div>
+        ) : (
+          /* Main Content */
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-280px)]">
+            {/* Map Section - Fixed */}
+            <div className="h-full">
+              <PropertyMap properties={filteredProperties} />
+            </div>
 
+<<<<<<< HEAD
           {/* Properties List - 50% */}
           <div className="h-full overflow-y-auto pr-2">
             <div className="space-y-4">
@@ -199,9 +257,25 @@ export function PropertyListing() {
                   <div className="text-gray-500">Try adjusting your search criteria</div>
                 </div>
               )}
+=======
+            {/* Properties List - Scrollable */}
+            <div className="h-full overflow-y-auto pr-2">
+              <div className="space-y-4">
+                {filteredProperties.map((property) => (
+                  <PropertyCard key={property.id} property={property} />
+                ))}
+                
+                {filteredProperties.length === 0 && (
+                  <div className="text-center py-12">
+                    <div className="text-gray-400 text-lg mb-2">No properties found</div>
+                    <div className="text-gray-500">Try adjusting your search criteria</div>
+                  </div>
+                )}
+              </div>
+>>>>>>> 0378b4b (Default message)
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -213,18 +287,16 @@ function PropertyCard({ property }: { property: Property }) {
       <div className="flex">
         <div className="w-64 h-48 relative">
           <img
-            src={property.image}
+            src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop"
             alt={property.title}
             className="w-full h-full object-cover"
           />
           <div className="absolute top-2 left-2 flex gap-1">
-            {property.verified && (
-              <Badge className="bg-green-600 text-white text-xs">NAL Verified</Badge>
-            )}
-            {property.urgent && (
+            <Badge className="bg-green-600 text-white text-xs">NAL Verified</Badge>
+            {property.status === 'Urgent Sale' && (
               <Badge className="bg-red-600 text-white text-xs">Urgent</Badge>
             )}
-            <Badge className="bg-blue-600 text-white text-xs">{property.riblScore}</Badge>
+            <Badge className="bg-blue-600 text-white text-xs">RIBL {property.ribl_rating || ''}</Badge>
           </div>
           <div className="absolute top-2 right-2 flex gap-1">
             <Button size="sm" variant="ghost" className="bg-white/80 hover:bg-white">
@@ -249,14 +321,11 @@ function PropertyCard({ property }: { property: Property }) {
               </h3>
               <div className="flex items-center text-gray-600 text-sm mb-2">
                 <MapPin className="w-4 h-4 mr-1" />
-                {property.location}
+                {property.city}, {property.state}
               </div>
             </div>
             <div className="text-right">
-              <div className="text-xl font-bold text-gray-900">{property.price}</div>
-              {property.originalPrice && (
-                <div className="text-sm text-gray-500 line-through">{property.originalPrice}</div>
-              )}
+              <div className="text-xl font-bold text-gray-900">{property.price_formatted}</div>
             </div>
           </div>
 
@@ -271,7 +340,7 @@ function PropertyCard({ property }: { property: Property }) {
             </div>
             <div className="flex items-center">
               <Square className="w-4 h-4 mr-1" />
-              {property.area}
+              {property.area_sqft.toLocaleString()} sq ft
             </div>
           </div>
 
@@ -281,22 +350,22 @@ function PropertyCard({ property }: { property: Property }) {
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <img
-                src={property.agent.image}
-                alt={property.agent.name}
-                className="w-8 h-8 rounded-full"
-              />
+              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-xs font-medium">
+                AG
+              </div>
               <div>
-                <div className="text-sm font-medium">{property.agent.name}</div>
-                <div className="text-xs text-gray-500">⭐ {property.agent.rating}</div>
+                <div className="text-sm font-medium">Agent</div>
+                <div className="text-xs text-gray-500">⭐ 4.5</div>
               </div>
             </div>
             
             <div className="flex gap-2">
               <Button size="sm" variant="outline">Contact</Button>
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                View Details
-              </Button>
+              <Link to={`/property/${property.id}`}>
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                  View Details
+                </Button>
+              </Link>
             </div>
           </div>
         </CardContent>

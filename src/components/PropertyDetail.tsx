@@ -18,7 +18,54 @@ import {
   Play, Image as ImageIcon, FileText, HelpCircle, Plus
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { getPropertyById } from "../data/properties";
+interface Property {
+  id: number;
+  title: string;
+  price_formatted: string;
+  price: string;
+  city: string;
+  state: string;
+  beds: number;
+  baths: number;
+  area_sqft: number;
+  area: string;
+  location: string;
+  description: string;
+  amenities: string[];
+  nearbyPlaces: { name: string; distance: string }[];
+  projectInfo?: {
+    projectTitle: string;
+    builderName: string;
+    fullLocation: string;
+    possessionDate: string;
+    priceRange: string;
+    pricePerSqft: string;
+    emiFrom: string;
+    projectArea: string;
+    buildings: string;
+    units: string;
+    sizes: string;
+    configurations: string;
+    launchDate: string;
+  };
+  developer?: {
+    name: string;
+    established: string;
+    experience: string;
+    description: string;
+    certifications: string[];
+    notableProjects: string[];
+  };
+  legalInfo: {
+    rera: string;
+    approvals: string[];
+  };
+  specifications: {
+    age: string;
+    parking: string;
+  };
+  images: string[];
+}
 import { EMICalculatorModal } from "./EMICalculatorModal";
 
 export function PropertyDetail() {
@@ -29,7 +76,35 @@ export function PropertyDetail() {
   const [activeSection, setActiveSection] = useState('overview');
   const [isEMIModalOpen, setIsEMIModalOpen] = useState(false);
 
-  const property = getPropertyById(id!);
+  const [property, setProperty] = useState<Property | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      fetchProperty(id);
+    }
+  }, [id]);
+
+  const fetchProperty = async (propertyId: string) => {
+    try {
+      const response = await fetch(`http://localhost/Master-Code-NAL/api/properties.php?id=${propertyId}`);
+      const data = await response.json();
+      if (data.success && data.data.length > 0) {
+        const prop = data.data[0];
+        // Add default images if none exist
+        prop.images = [
+          'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop',
+          'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop',
+          'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop'
+        ];
+        setProperty(prop);
+      }
+    } catch (error) {
+      console.error('Error fetching property:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,6 +123,14 @@ export function PropertyDetail() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">Loading property details...</div>
+      </div>
+    );
+  }
 
   if (!property) {
     return (
@@ -120,10 +203,10 @@ export function PropertyDetail() {
 
               {/* Badges */}
               <div className="flex flex-wrap gap-3 mb-6">
-                {property.specifications.age === 'Under Construction' && (
+                {property.specifications?.age === 'Under Construction' && (
                   <Badge className="bg-green-100 text-green-800 px-3 py-1">New Launch</Badge>
                 )}
-                {property.specifications.age === 'Ready to Move' && (
+                {property.specifications?.age === 'Ready to Move' && (
                   <Badge className="bg-blue-100 text-blue-800 px-3 py-1">Ready to Move</Badge>
                 )}
                 <Badge variant="outline" className="px-3 py-1">
@@ -328,7 +411,7 @@ export function PropertyDetail() {
               <div className="mb-6">
                 <Badge variant="outline" className="px-3 py-1">
                   <ExternalLink className="w-3 h-3 mr-1" />
-                  RERA ID: {property.legalInfo.rera}
+                  RERA ID: {property.legalInfo?.rera || 'Not Available'}
                 </Badge>
               </div>
               <p className="text-gray-600 leading-relaxed">

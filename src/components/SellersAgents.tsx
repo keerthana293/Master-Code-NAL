@@ -140,58 +140,7 @@ export function SellersAgents() {
           ))}
         </div>
 
-        {/* Agent Success Stories */}
-        <div className="mt-16">
-          <h3 className="text-2xl font-bold text-center text-gray-900 mb-8">What Our Partners Say</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                name: "Rajesh Kumar",
-                role: "Real Estate Agent",
-                company: "Mumbai Properties",
-                quote: "NAL India helped me increase my sales by 300% in just 6 months. The lead quality is exceptional.",
-                rating: 5,
-              },
-              {
-                name: "Priya Sharma",
-                role: "Property Developer",
-                company: "Sharma Constructions",
-                quote: "The premium listing feature gave our projects amazing visibility. Highly recommend for developers.",
-                rating: 5,
-              },
-              {
-                name: "Amit Patel",
-                role: "Individual Seller",
-                company: "Homeowner",
-                quote: "Sold my apartment in just 15 days! The platform is user-friendly and highly effective.",
-                rating: 5,
-              },
-            ].map((testimonial, index) => (
-              <Card key={index} className="bg-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-[#0056D2] rounded-full flex items-center justify-center mr-4">
-                      <span className="text-white font-semibold">
-                        {testimonial.name.split(' ').map(n => n[0]).join('')}
-                      </span>
-                    </div>
-                    <div>
-                      <div className="font-semibold">{testimonial.name}</div>
-                      <div className="text-sm text-gray-600">{testimonial.role}</div>
-                      <div className="text-xs text-gray-500">{testimonial.company}</div>
-                    </div>
-                  </div>
-                  <p className="text-gray-700 italic mb-4">"{testimonial.quote}"</p>
-                  <div className="flex items-center">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <span key={i} className="text-yellow-400">★</span>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+
       </div>
     </section>
   );
