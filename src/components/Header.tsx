@@ -22,7 +22,7 @@ export function Header() {
           </div>
 
           {/* Navigation Menu */}
-          <nav className="flex items-center space-x-6">
+          <nav className="flex items-center space-x-8 sm:space-x-8 lg:space-x-16">
             <Link
               to="/properties"
               className="text-gray-700 hover:text-[#0056D2] px-3 py-2 text-sm font-medium transition-colors"
@@ -94,9 +94,11 @@ export function Header() {
 
           {/* Right side buttons */}
           <div className="flex items-center space-x-4">
-            <Button size="sm" className="bg-[#0056D2] hover:bg-[#0056D2]/90 text-white">
-              Post Property
-            </Button>
+            <Link to="/list-property">
+              <Button size="sm" className="bg-[#0056D2] hover:bg-[#0056D2]/90 text-white">
+                Post Property
+              </Button>
+            </Link>
             {!isLoggedIn ? (
               <Button variant="ghost" size="sm">
                 <User className="w-4 h-4 mr-2" />

@@ -1,17 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Property } from "../data/properties";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { MapPin, Navigation, Layers } from "lucide-react";
+import { MapPin, Navigation, Layers, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
 
 interface PropertyMapProps {
   properties: Property[];
+  currentIndex?: number;
 }
 
-export function PropertyMap({ properties }: PropertyMapProps) {
+export function PropertyMap({ properties, currentIndex = 0 }: PropertyMapProps) {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [mapView, setMapView] = useState<'satellite' | 'roadmap'>('roadmap');
+
+  // Remove internal navigation functions as they're handled externally
 
   // Mock coordinates for demonstration - in real app, you'd geocode addresses
   const getPropertyCoordinates = (property: Property) => {
@@ -43,29 +46,14 @@ export function PropertyMap({ properties }: PropertyMapProps) {
             <MapPin className="w-5 h-5" />
             Property Locations
           </CardTitle>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant={mapView === 'roadmap' ? 'default' : 'outline'}
-              onClick={() => setMapView('roadmap')}
-            >
-              <Navigation className="w-4 h-4 mr-1" />
-              Map
-            </Button>
-            <Button
-              size="sm"
-              variant={mapView === 'satellite' ? 'default' : 'outline'}
-              onClick={() => setMapView('satellite')}
-            >
-              <Layers className="w-4 h-4 mr-1" />
-              Satellite
-            </Button>
+          <div className="text-xs text-gray-500">
+            {properties.length > 0 && `${currentIndex + 1} / ${properties.length}`}
           </div>
         </div>
       </CardHeader>
       
       <CardContent className="p-0 flex-1 min-h-0">
-        <div className="relative w-full h-full bg-gray-100 rounded-b-lg overflow-hidden">
+        <div className="relative w-full h-full bg-gray-100 rounded overflow-hidden">
           {/* Mock Map Interface */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-green-50">
             <div className="absolute inset-0 opacity-20">
@@ -93,12 +81,16 @@ export function PropertyMap({ properties }: PropertyMapProps) {
                     left: `${Math.max(5, Math.min(95, x))}%`,
                     top: `${Math.max(5, Math.min(95, y))}%`
                   }}
-                  onClick={() => setSelectedProperty(property)}
+                  onClick={() => {
+                    setSelectedProperty(property);
+                  }}
                 >
                   <div className={`relative ${selectedProperty?.id === property.id ? 'z-20' : 'z-10'}`}>
                     <div className={`w-8 h-8 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-xs font-bold transition-all ${
                       selectedProperty?.id === property.id 
                         ? 'bg-red-600 scale-125' 
+                        : index === currentIndex
+                        ? 'bg-orange-600'
                         : 'bg-blue-600 hover:bg-blue-700'
                     }`}>
                       {index + 1}
@@ -144,31 +136,25 @@ export function PropertyMap({ properties }: PropertyMapProps) {
             
             {/* Map Controls */}
             <div className="absolute top-4 right-4 flex flex-col gap-2">
-              <Button size="sm" variant="outline" className="bg-white shadow">
+              <Button size="sm" variant="outline" className="bg-white shadow h-8 w-8 p-0">
                 +
               </Button>
-              <Button size="sm" variant="outline" className="bg-white shadow">
+              <Button size="sm" variant="outline" className="bg-white shadow h-8 w-8 p-0">
                 -
               </Button>
-            </div>
-            
-            {/* Legend */}
-            <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow p-3">
-              <div className="text-xs font-semibold mb-2">Legend</div>
-              <div className="flex items-center gap-2 text-xs">
-                <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
-                <span>Available Properties</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs mt-1">
-                <div className="w-4 h-4 bg-red-600 rounded-full"></div>
-                <span>Selected Property</span>
-              </div>
             </div>
             
             {/* Property Count */}
             <div className="absolute bottom-4 right-4 bg-white rounded-lg shadow px-3 py-2">
               <div className="text-xs font-semibold">{properties.length} Properties</div>
             </div>
+            
+            {/* Current Property Indicator */}
+            {properties.length > 0 && (
+              <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow px-3 py-2">
+                <div className="text-xs font-semibold">Viewing: {currentIndex + 1} / {properties.length}</div>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

@@ -1,12 +1,11 @@
 import { useState, useMemo } from "react";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
+
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Search, MapPin, Bed, Bath, Square, Filter, Heart, Share2 } from "lucide-react";
+import { Search, MapPin, Bed, Bath, Square, Filter, Heart, Share2, ChevronLeft, ChevronRight } from "lucide-react";
 import { properties, Property } from "../data/properties";
 import { PropertyMap } from "./PropertyMap";
 import { Link } from "react-router-dom";
@@ -17,6 +16,7 @@ export function PropertyListing() {
   const [selectedBHK, setSelectedBHK] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
   const [sortBy, setSortBy] = useState("relevance");
+  const [currentPropertyIndex, setCurrentPropertyIndex] = useState(0);
 
   // Extract unique cities from properties
   const cities = useMemo(() => {
@@ -84,9 +84,7 @@ export function PropertyListing() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-      
+    <div className="bg-gray-50 min-h-full">
       <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
         {/* Search Bar */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -167,12 +165,28 @@ export function PropertyListing() {
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-280px)]">
-          {/* Map Section - Fixed */}
-          <div className="h-full">
-            <PropertyMap properties={filteredProperties} />
+          {/* Map Section - 50% */}
+          <div className="h-full relative sticky top-0">
+            <PropertyMap properties={filteredProperties} currentIndex={currentPropertyIndex} />
+            
+            {/* Property Navigation Arrow */}
+            <div className="absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const nextIndex = (currentPropertyIndex + 1) % filteredProperties.length;
+                  setCurrentPropertyIndex(nextIndex);
+                }}
+                className="h-12 w-8 p-0 bg-white shadow-lg hover:bg-gray-50 rounded-full"
+                disabled={filteredProperties.length === 0}
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
 
-          {/* Properties List - Scrollable */}
+          {/* Properties List - 50% */}
           <div className="h-full overflow-y-auto pr-2">
             <div className="space-y-4">
               {filteredProperties.map((property) => (
@@ -189,8 +203,6 @@ export function PropertyListing() {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

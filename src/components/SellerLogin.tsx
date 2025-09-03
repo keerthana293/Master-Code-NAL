@@ -20,7 +20,7 @@ export function SellerLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="bg-gray-50 flex items-center justify-center min-h-full py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Seller Login</CardTitle>

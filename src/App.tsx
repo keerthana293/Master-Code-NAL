@@ -20,6 +20,7 @@ import { AdminLogin } from "./components/AdminLogin";
 import { AdminDashboard } from "./components/AdminDashboard";
 import { AboutUs } from "./components/AboutUs";
 import { ContactUs } from "./components/ContactUs";
+import { PropertyListingForm } from "./components/PropertyListingForm";
 
 function HomePage() {
   return (
@@ -40,44 +41,25 @@ function HomePage() {
 export default function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-white">
-        <Routes>
-          <Route path="/agent" element={<AgentLogin />} />
-          <Route path="/agent/dashboard" element={<AgentDashboard />} />
-          <Route path="/seller" element={<SellerLogin />} />
-          <Route path="/seller/dashboard" element={<SellerDashboard />} />
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/properties" element={<PropertyListing />} />
-          <Route path="/property/:id" element={<PropertyDetail />} />
-          <Route path="/about" element={
-            <>
-              <Header />
-              <main>
-                <AboutUs />
-              </main>
-              <Footer />
-            </>
-          } />
-          <Route path="/contact" element={
-            <>
-              <Header />
-              <main>
-                <ContactUs />
-              </main>
-              <Footer />
-            </>
-          } />
-          <Route path="/" element={
-            <>
-              <Header />
-              <main>
-                <HomePage />
-              </main>
-              <Footer />
-            </>
-          } />
-        </Routes>
+      <div className="min-h-screen bg-white flex flex-col">
+        <Header />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/agent" element={<AgentLogin />} />
+            <Route path="/agent/dashboard" element={<AgentDashboard />} />
+            <Route path="/seller" element={<SellerLogin />} />
+            <Route path="/seller/dashboard" element={<SellerDashboard />} />
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/properties" element={<PropertyListing />} />
+            <Route path="/property/:id" element={<PropertyDetail />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/list-property" element={<PropertyListingForm />} />
+            <Route path="/" element={<HomePage />} />
+          </Routes>
+        </main>
+        <Footer />
       </div>
     </Router>
   );

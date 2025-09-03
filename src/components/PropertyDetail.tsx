@@ -51,7 +51,7 @@ export function PropertyDetail() {
 
   if (!property) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="bg-gray-50 flex items-center justify-center min-h-full py-12">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Property Not Found</h1>
           <Button onClick={() => navigate('/')} className="bg-[#0056D2] hover:bg-[#0056D2]/90">
@@ -72,7 +72,7 @@ export function PropertyDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b sticky top-0 z-50">
         <div className="w-full px-4 sm:px-6 lg:px-8">
